@@ -1,5 +1,7 @@
 # 운결마을 · Ungyeol Village
 
+[공개 마을 열기](https://ungyeol-village.vercel.app) · [관계 지도](https://ungyeol-village.vercel.app/?view=map)
+
 **우리의 인연이 사는 곳.** 제공된 열두 명의 간지 명식을 모티프로 만든 3D 이야기 마을입니다. 로그인 없이 탐험하고, 주민을 선택하고, 66쌍의 관계 근거를 읽을 수 있습니다.
 
 ## 주요 기능
