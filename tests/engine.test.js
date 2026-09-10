@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {residents} from '../src/data.js';
+import {allRelations,relation,distribution,validateResident,tenGod} from '../src/engine.js';
+test('all 12 supplied charts are valid without filling unknown hours',()=>{assert.equal(residents.length,12);for(const p of residents)assert.equal(validateResident(p),true);assert.equal(residents.filter(p=>!p.pillars[3]).length,8);});
+test('66 unique pairs, symmetric scalar scores and unknown-hour flags',()=>{const rs=allRelations(residents);assert.equal(rs.length,66);assert.equal(new Set(rs.map(r=>[r.a.id,r.b.id].sort().join(':'))).size,66);for(const r of rs){const reverse=relation(r.b,r.a);for(const key of ['affinity','support','tension','type'])assert.equal(r[key],reverse[key]);assert.equal(r.missing,!r.a.pillars[3]||!r.b.pillars[3]);assert.ok(r.affinity>=0&&r.affinity<=99);}});
+test('丁壬 attraction and direction-specific ten gods',()=>{const r=relation(residents[0],residents[1]);assert.ok(r.evidence.some(e=>e.text.includes('천간합')));assert.equal(tenGod('임','정'),'정재');assert.equal(tenGod('정','임'),'정관');});
+test('day branch clash stays visible even alongside positive signals',()=>{const r=relation(residents[2],residents[5]);assert.equal(r.a.pillars[2],'무진');assert.equal(r.b.pillars[2],'무진');const clash=relation(residents[0],residents[9]);assert.ok(clash.evidence.some(e=>e.text==='일지 오·자 충'));assert.ok(clash.tension>=30);});
+test('surface counts never invent two missing characters',()=>{for(const p of residents)assert.equal(distribution(p).reduce((a,b)=>a+b,0),p.pillars[3]?8:6);});
+test('invalid charts, missing mandatory pillars and mismatched hours rejected',()=>{for(const pillars of [['갑축','계미','임오',null],['경진',null,'임오',null],['경진','갑미','임오',null],['경진','계미','임오','갑자']])assert.throws(()=>validateResident({name:'검증',pillars}));});
+test('adding a resident increases pair count deterministically',()=>{const next=[...residents,{...residents[0],id:'new',name:'새주민'}];assert.equal(allRelations(next).length,78);});
